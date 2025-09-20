@@ -25,7 +25,7 @@ module timer (
         .rnd(random_ms)
     );
 
-    seven_seg ss(
+    sseg ss(
         .clk(clk),
         .clear(clear),
         .display_data(display_data),
@@ -36,10 +36,10 @@ module timer (
 
     always_ff @(posedge(clk), posedge(clear)) begin
         if (clear) begin
-            current_state      <= initialize;
-            elapsed_ms         <= 0;
-            ms_count         <= 0;
-            random_ms_scaled   <= 0;
+            current_state <= initialize;
+            elapsed_ms <= 0;
+            ms_count <= 0;
+            random_ms_scaled <= 0;
         end else begin
             current_state <= next_state;
 
@@ -74,7 +74,7 @@ module timer (
 
     case (current_state)
         initialize: begin
-            display_data = 16'hBBCE;
+            display_data = 16'hBCEB;
             if (start)
                 next_state = random;
         end
