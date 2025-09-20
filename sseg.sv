@@ -9,7 +9,7 @@ module sseg (
     parameter N = 18;
     logic [N-1:0] count;
 
-    always_ff @(posedge(clk)) begin
+    always_ff @(posedge(clk), posedge(clear)) begin
         if (clear)
             count <= 0;
         else
@@ -50,9 +50,9 @@ module sseg (
         8'hFF  // F (blank)
     };
 
-    always_comb begin
-        sseg = SEG_LUT[digit_data];
-        an = ~(8'b00000001 << digit_sel);
+    always_comb begin 
+        sseg = SEG_LUT[digit_data]; 
+        an = ~(8'b00000001 << digit_sel); 
     end
 
 endmodule
