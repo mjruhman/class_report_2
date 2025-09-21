@@ -15,16 +15,19 @@ module timer (
     logic [16:0] elapsed_ms, ms_count;
     logic [15:0] display_data;
 
-    parameter N_rand = 14;
-    logic [N_rand-1:0] random_ms, random_ms_scaled;
+    parameter N_random = 14;
+    logic [N_random-1:0] random_ms, random_ms_new;
 
 
-    prbs#(N_rand) lfsr(
+    //obtain the pseudo random number
+    //improved from class version to fit with project
+    prbs#(N_random) lfsr(
         .clk(clk),
         .rst(clear),
         .rnd(random_ms)
     );
 
+    //create a file to be able to display data easily and not deal with the hassel
     sseg ss(
         .clk(clk),
         .clear(clear),
@@ -39,7 +42,7 @@ module timer (
             current_state <= initialize;
             elapsed_ms <= 0;
             ms_count <= 0;
-            random_ms_scaled <= 0;
+            random_ms_new <= 0;
         end else begin
             current_state <= next_state;
 
@@ -56,7 +59,7 @@ module timer (
                 random: begin
                     elapsed_ms <= 0;
                     //make it between 2 - 15 seconds
-                    random_ms_scaled <= 14'd2000 + (random_ms % 14'd13001);
+                    random_ms_new <= 14'd2000 + (random_ms % 14'd13001);
                 end
 
                 reset_ms:
@@ -67,6 +70,7 @@ module timer (
         end
     end
 
+    //Following the design chart created
     always_comb begin
     next_state = current_state;
     led = 1'b0;
@@ -74,7 +78,10 @@ module timer (
 
     case (current_state)
         initialize: begin
+            //Cannot make BBCE because during clear it will leave a 1 in the far right an
             display_data = 16'hBCEB;
+
+            //starting program
             if (start)
                 next_state = random;
         end
@@ -84,7 +91,7 @@ module timer (
         end
 
         pause: begin
-            if (elapsed_ms == random_ms_scaled)
+            if (elapsed_ms == random_ms_new)
                 next_state = reset_ms;
             else if (stop)
                 next_state = nines;
