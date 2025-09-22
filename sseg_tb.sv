@@ -1,5 +1,5 @@
 
-module tb_sseg;
+module sseg_tb;
 
     logic clk;
     logic clear;
@@ -18,7 +18,6 @@ module tb_sseg;
         .an(an)
     );
 
-    // Test procedure
     initial begin
 
         clk = 0;
